@@ -22,3 +22,7 @@ body {
   width: 100vw;
   overflow: hidden;
 }
+
+#location svg {
+  transform: translate(-4px, 2px);
+}

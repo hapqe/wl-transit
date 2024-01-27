@@ -1,0 +1,1 @@
+cargo b --release --target wasm32-unknown-unknown && wasm-bindgen --no-typescript --target web --out-dir ../pkg ./target/wasm32-unknown-unknown/debug/station_picker.wasm && wasm-opt -Oz -o ../pkg/station_picker_bg.wasm ../pkg/station_picker_bg.wasm
