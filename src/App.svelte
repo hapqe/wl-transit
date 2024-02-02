@@ -1,6 +1,6 @@
 <script>
-  import { GeoAlt } from "svelte-bootstrap-icons";
-  import init, { closest_station } from "../pkg/station_picker";
+  import { GeoAlt, Line } from "svelte-bootstrap-icons";
+  import init, { closest_stations } from "../pkg/station_picker";
   import { fly } from "svelte/transition";
 
   function getCurrentPosition() {
@@ -40,44 +40,50 @@
 
   async function info() {
     const [_, pos] = await Promise.all([init(), getCurrentPosition()]);
-    const station = await closest_station(pos.latitude, pos.longitude);
+    const stations = await closest_stations(pos.latitude, pos.longitude, 400)
+      .split("\n")
+      .filter((s) => s !== "")
+      .map((s) => s.split(":"));
 
-    const [id, location] = station.split(":");
+    const data = await Promise.all(
+      stations.map((s) => fetch("/ogd_realtime/monitor?diva=" + s[0])),
+    );
 
-    const data = await fetch("/ogd_realtime/monitor?diva=" + id);
-    const json = await data.json();
-    console.log(json);
-    const lines = json.data.monitors;
+    const json = await Promise.all(data.map((data) => data.json()));
 
-    return { lines, location, pos: [pos.longitude, pos.latitude] };
+    return {
+      json,
+      stations: stations.map((s) => s[1]),
+      pos: [pos.longitude, pos.latitude],
+    };
   }
+  info();
 </script>
 
-{#await info() then { location, lines: all, pos }}
-  <div transition:fly={{ y: 100 }} id="wrapper">
-    <div id="heading">
-      <h1>wl transit</h1>
-    </div>
-    <span id="location"><GeoAlt />{location}</span>
-    <div id="departures">
-      {#each all as { lines, locationStop }}
-        <span
-          ><b>{lines[0].name}</b>
-          {lines[0].towards} •
-          <b>
-            {lines[0].departures.departure
-              .map((d) => d.departureTime.countdown)
-              .slice(0, 3)
-              .join(", ")}min
-          </b>
-          • {distance(locationStop.geometry.coordinates, pos)}</span
-        >
-      {/each}
-    </div>
-    <div></div>
-    <div></div>
-    <div></div>
+{#await info() then { stations, json, pos }}
+  <div id="heading">
+    <h1>wl transit</h1>
   </div>
+  {#each json as { data: { monitors } }, i}
+    <div transition:fly={{ y: 100 }} id="location">
+      <span id="station"><GeoAlt />{stations[i]}</span>
+      <div id="departures">
+        {#each monitors as { locationStop: { geometry: { coordinates } }, lines: [line] }}
+          <span>
+            <b>{line.name}</b>
+            {line.towards} •
+            <b>
+              {line.departures.departure
+                .map((d) => d.departureTime.countdown)
+                .slice(0, 3)
+                .join(", ")}min
+            </b>
+            • {distance(pos, coordinates)}
+          </span>
+        {/each}
+      </div>
+    </div>
+  {/each}
 {/await}
 
 <style>
@@ -90,12 +96,12 @@
     opacity: 0.5;
   }
 
-  #wrapper {
+  #location {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    height: 100%;
+    margin-bottom: 2rem;
   }
 
   #heading {
@@ -105,8 +111,9 @@
     justify-content: center;
   }
 
-  #location {
+  #station {
     opacity: 0.5;
+    margin-bottom: 0.5rem;
   }
 
   #departures {

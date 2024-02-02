@@ -29,14 +29,15 @@ function getStringFromWasm0(ptr, len) {
 /**
 * @param {number} latitude
 * @param {number} longitude
+* @param {number} max_distance
 * @returns {string}
 */
-export function closest_station(latitude, longitude) {
+export function closest_stations(latitude, longitude, max_distance) {
     let deferred1_0;
     let deferred1_1;
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.closest_station(retptr, latitude, longitude);
+        wasm.closest_stations(retptr, latitude, longitude, max_distance);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         deferred1_0 = r0;
