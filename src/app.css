@@ -18,9 +18,10 @@ body {
 }
 
 #app {
+  overflow: hidden;
+  overflow-y: auto;
   height: 100svh;
   width: 100vw;
-  overflow: hidden;
 }
 
 #location svg {

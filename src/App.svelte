@@ -1,5 +1,5 @@
 <script>
-  import { GeoAlt, Line } from "svelte-bootstrap-icons";
+  import { GeoAlt, Line, Search } from "svelte-bootstrap-icons";
   import init, { closest_stations } from "../pkg/station_picker";
   import { fly } from "svelte/transition";
 
@@ -63,6 +63,7 @@
 {#await info() then { stations, json, pos }}
   <div id="heading">
     <h1>wl transit</h1>
+    <span><Search /></span>
   </div>
   {#each json as { data: { monitors } }, i}
     <div transition:fly={{ y: 100 }} id="location">
@@ -93,7 +94,6 @@
     margin-top: 0.5rem;
     margin-left: 1rem;
     margin-bottom: 0;
-    opacity: 0.5;
   }
 
   #location {
@@ -101,14 +101,20 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 2rem;
+    padding: 1rem;
   }
 
   #heading {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0.5;
+  }
+
+  #heading * {
+    margin: 1rem;
   }
 
   #station {
