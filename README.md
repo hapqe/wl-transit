@@ -4,8 +4,11 @@ Wl-tranit ist eine simple Browser-Page, weiters gedacht als [PWA](https://de.wik
 
 ![Example Image](https://raw.githubusercontent.com/hapqe/wl-transit/main/examples/wl-transit.png)
 
+# Verwendung
+Die Seite ist unter [](https://bit.ly/wltr) einsehbar
+
 # Building
-Make sure you have `bun`, `cargo`, `wasm-bindgen` and `wasm-opt` installed; First `cd` into `station_picker` and run `./bindgen.sh`. Then run `bun run build`. Alternatively you can use NPM.
+Stelle sicher, dass du `bun`, `cargo`, `wasm-bindgen` und `wasm-opt` installiert hast. Zuerst wechsle in das Verzeichnis `station_picker` mit `cd` und führe `./bindgen.sh` aus. Anschließend führe `bun` run build aus. Alternativ kannst du auch `npm` verwenden.
 
 # Credit
 
